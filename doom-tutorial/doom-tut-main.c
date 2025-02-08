@@ -15,7 +15,6 @@
 #define pixelScale 4/res                    //OpenGL pixel scale
 #define GLSW       (SW*pixelScale)          //OpenGL window width
 #define GLSH       (SH*pixelScale)          //OpenGL window height
-#define PI         3.141593 
 //------------------------------------------------------------------------------
 typedef struct 
 {
@@ -70,8 +69,8 @@ void movePlayer()
  if(Keys.w ==1 && Keys.m==0){ Player.x += delta_x; Player.y += delta_y; }
  if(Keys.s ==1 && Keys.m==0){ Player.x -= delta_x; Player.y -= delta_y; }
  //strafe left, right
- if(Keys.sr==1){ Player.x += delta_y; Player.y -= delta_x; }
- if(Keys.sl==1){ Player.x -= delta_y; Player.y += delta_x; }
+ if(Keys.sl==1){ Player.x += delta_y; Player.y -= delta_x; }
+ if(Keys.sr==1){ Player.x -= delta_y; Player.y += delta_x; }
  //move up, down, look up, look down
  if(Keys.a==1 && Keys.m==1){ Player.l -= 1; }
  if(Keys.d==1 && Keys.m==1){ Player.l += 1; }
@@ -80,17 +79,37 @@ void movePlayer()
 }
 
 void clearBackground() 
-{int x,y;
- for(y=0;y<SH;y++)
- { 
-  for(x=0;x<SW;x++){ pixel(x,y,8);} //clear background color
- }	
+{
+  int x,y;
+  for(y=0;y<SH;y++)
+  { 
+    for(x=0;x<SW;x++){ pixel(x,y,8);} //clear background color
+  }	
 }
 
-int tick;
+// x1, x2: the x coordinates defining the wall's four points.
+//  In a vertical wall, two vertically aligned points will
+//  have identical x coords.
+// by1, by2: the y values of the bottom two points.
+void drawWall(int x1, int x2, int by1, int by2)
+{
+  int x, y;
+  int delta_yb = by2 - by1;
+  int delta_x = x2 - x1; if(delta_x == 0) { delta_x = 1; } // set to 1 if 0 to prevent divide by zero error
+  int start_x = x1; // begin drawing wall from x1
+  
+  // draw x vertical lines to render wall
+  for(x = x1; x < x2; x++)
+  {
+    int y1 = delta_yb * (x-start_x+0.5)/delta_x+by1; // calculate y coord of point to plot
+    pixel(x, y1, 0); // plot point on bottom of wall
+
+  }
+}
+
 void draw3D()
 {
-  int worldx[4], worldy[4], worldz[4];
+  int world_x[4], world_y[4], world_z[4];
   float COS = M.cos[Player.a];
   float SIN = M.sin[Player.a];
 
@@ -99,24 +118,27 @@ void draw3D()
   int x2 = 40 - Player.x, y2 = 290 - Player.y;
   
   // position of point 1
-  worldx[0] = x1*COS - y1*SIN; 
-  worldy[0] = y1*COS + x1*SIN;
-  worldz[0] = 0 - Player.z + ((Player.l * worldy[0])/32.0);
+  world_x[0] = x1*COS - y1*SIN; 
+  world_y[0] = y1*COS + x1*SIN;
+  world_z[0] = 0 - Player.z + ((Player.l * world_y[0])/32.0);
   // position of point 2
-  worldx[1] = x2*COS - y2*SIN; 
-  worldy[1] = y2*COS + x2*SIN;
-  worldz[1] = 0 - Player.z + ((Player.l * worldy[1])/32.0);
+  world_x[1] = x2*COS - y2*SIN; 
+  world_y[1] = y2*COS + x2*SIN;
+  world_z[1] = 0 - Player.z + ((Player.l * world_y[1])/32.0);
 
-  // transform worldx and worldy to their screen positions
+  // transform world_x and world_y to their screen positions
   int FOV = 200;
-  worldx[0] = worldx[0]*FOV / worldy[0]+SW2;
-  worldy[0] = worldz[0]*FOV / worldy[0]+SH2;
-  worldx[1] = worldx[1]*FOV / worldy[1]+SW2;
-  worldy[1] = worldz[1]*FOV / worldy[1]+SH2;
+  world_x[0] = world_x[0]*FOV / world_y[0]+SW2;
+  world_y[0] = world_z[0]*FOV / world_y[0]+SH2;
+  world_x[1] = world_x[1]*FOV / world_y[1]+SW2;
+  world_y[1] = world_z[1]*FOV / world_y[1]+SH2;
 
   // skip drawing negative x and y values (won't be on the screen anyway)
-  if(worldx[0]>0 && worldx[0]<SW && worldy[0]>0 && worldy[0]<SH){ pixel(worldx[0], worldy[0], 0); }
-  if(worldx[1]>0 && worldx[1]<SW && worldy[1]>0 && worldy[1]<SH){ pixel(worldx[1], worldy[1], 0); }
+  /*if(world_x[0]>0 && world_x[0]<SW && world_y[0]>0 && world_y[0]<SH){ pixel(world_x[0], world_y[0], 0); }*/
+  /*if(world_x[1]>0 && world_x[1]<SW && world_y[1]>0 && world_y[1]<SH){ pixel(world_x[1], world_y[1], 0); }*/
+
+  // draw wall from above coords
+  drawWall(world_x[0], world_x[1], world_y[0], world_y[1]);
 }
 void display() 
 {
