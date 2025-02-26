@@ -1,0 +1,21 @@
+This file is a "catch-all" for anything important I want to write down
+from my research. Different topics of info will generally be separate 
+paragraphs/chunks of info.
+
+[NOTES TO SELF]
+* Take time to digest and document the precise mathematical theory used
+  to draw 3D graphics to the screen (esp. from the Doom in C tutorial).
+
+[RESEARCH NOTES]
+* typedef - [define it]
+* What are the typedefs in the tutorial for?
+  > time
+  > keys
+  > math
+  > player
+
+* What do the methods of the tutorial program do and HOW?
+
+* In main(), WHAT do each of the glut functions do? (do not worry
+  about the HOW, abstraction with libraries is fine)
+
