@@ -20,6 +20,10 @@
 #define GLSH       (SH*pixelScale)          //OpenGL window height
 #define MSPF       50                       // milliseconds per frame
 //------------------------------------------------------------------------------
+// DEBUG: tracks number of executions of display(). 
+// Used to print FPS at regular intervals.
+int displayfnCount = 0; 
+
 typedef struct 
 {
  int fr1,fr2;           //frame 1 frame 2, to create constant frame rate
@@ -231,6 +235,8 @@ void draw3D()
 }
 void display() 
 {
+
+  int fpsDisplayRate = 100000;  // how many executions of this function between FPS printout updates
   int x,y;
   if(T.fr1-T.fr2 >= MSPF) 
   { 
@@ -245,7 +251,13 @@ void display()
 
   T.fr1=glutGet(GLUT_ELAPSED_TIME);          //1000 Milliseconds per second
   glutPostRedisplay();
-  printf("frame drawn in %dms\n", T.fr1-T.fr2); // debug
+  /*printf("frame drawn in %dms\n", T.fr1-T.fr2); // debug*/
+  displayfnCount++;
+  if(displayfnCount >= fpsDisplayRate)
+  {
+    displayfnCount = 0;
+    printf("FPS: %d\n", 1000/(T.fr1-T.fr2)); 
+  }
 } 
 
 void KeysDown(unsigned char key,int x,int y)   

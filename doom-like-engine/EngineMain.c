@@ -6,6 +6,7 @@
 // Requisite libraries
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include <GL/glut.h>
 
 // Defines global constants and structs
@@ -21,6 +22,17 @@
 #define GL_WIN_HEIGHT   (SCREEN_HEIGHT*PIXEL_SCALE)
 #define MSPF            50      // milliseconds per frame; 1000/MSPF = FPS
 
+// DEBUG: counts the number of times displayFrame() has executed. 
+// Used to display FPS at regular intervals.
+int displayFrame_Counter = 0; 
+// how many executions of displayFrame() between FPS printouts; increase to reduce rate of printouts
+unsigned int fpsDisplayRate = 100000; // default: 100000 
+// number of FPS samples to average from per FPS display; do not set too high, lest you gobble up memory with only integers
+int fpsSampleRate = 100; // default: 100
+// running total of FPS samples, used to calculate output average
+int sampleSum = 0;
+// tracks index to insert next FPS sample to
+int nextSampleIdx = 0;
 typedef struct
 {
   int frame1, frame2;
@@ -78,6 +90,7 @@ void drawPixel(int x, int y, int color)
   glColor3ub(rgb[0], rgb[1], rgb[2]);
   glBegin(GL_POINTS);
   glVertex2i(x*PIXEL_SCALE+2, y*PIXEL_SCALE+2);
+  glEnd();
 }
 
 // draws singular, flat color to the screen
@@ -88,9 +101,43 @@ void clearBackground()
   { 
     for(x=0;x<SCREEN_WIDTH;x++)
     { 
-      drawPixel(x,y,6);
+      drawPixel(x,y,8);
     } 
   }	
+}
+
+// Prints out the last recorded average FPS to the terminal
+// NOTICE: this function should only ever be invoked at the end of displayFrame() 
+void printFPS()
+{
+  displayFrame_Counter++;
+  // DEV NOTE: refactor to use short instead of int for memory economy
+  int bftSample[fpsSampleRate]; // sampled buffer times (frame1-frame2)
+  // init all values to -1; will indicate unset value since FPS samples
+  // are always positive
+  memset(bftSample, -1, sizeof(bftSample));
+  // Pseudo-index of current sampling interval (i.e. for 100 samples, will increment to 100)
+  // Compared with nextSampleIdx, which is a concrete, controlled index value for iterating
+  // over bftSample array 
+  int currentSampleInterval = displayFrame_Counter / (fpsDisplayRate/fpsSampleRate); 
+
+  // sample current FPS at regular intervals, placing the sample in the next vacant index
+  if(currentSampleInterval > nextSampleIdx && bftSample[nextSampleIdx] == -1)
+  {
+    bftSample[nextSampleIdx] = 1000/(Bft.frame1-Bft.frame2);
+    sampleSum += bftSample[nextSampleIdx];
+    nextSampleIdx++;
+  }
+
+  if(displayFrame_Counter >= fpsDisplayRate)
+  {
+    displayFrame_Counter = 0;
+    nextSampleIdx = 0;
+    // calculate average frame rate
+    int avgFPS = sampleSum / fpsSampleRate;
+    sampleSum = 0;
+    printf("FPS: %d\n", avgFPS); 
+  }
 }
 
 void displayFrame()
@@ -109,7 +156,9 @@ void displayFrame()
   // time elapsed in milliseconds since engine started
   Bft.frame1 = glutGet(GLUT_ELAPSED_TIME);
   glutPostRedisplay();
-  printf("frame drawn in %dms\n", Bft.frame1-Bft.frame2); // debug
+  // debug
+  /*printf("frame drawn in %dms\n", Bft.frame1-Bft.frame2);*/
+  printFPS();
 }
 
 int main(int argc, char* argv[])
