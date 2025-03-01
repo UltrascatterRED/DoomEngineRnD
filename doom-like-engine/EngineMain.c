@@ -140,13 +140,41 @@ void printFPS()
   }
 }
 
+// DEBUG; Displays a "palette" showing all supported colors and animated frames
+int tick = 0;
+void drawTest()
+{
+  int swHalf = SCREEN_WIDTH/2;
+  int shHalf = SCREEN_HEIGHT/2;
+  int c = 0; // color ID
+  for(int y = 0; y < shHalf; y++)
+  {
+    for(int x = 0; x < swHalf; x++)
+    {
+      drawPixel(x, y, c); 
+      c += 1;
+      if(c > 8) { c = 0; }
+    }
+  }
+  //frame rate
+  tick += 1; 
+  if(tick>20) { tick = 0; } 
+  drawPixel(swHalf, shHalf+tick, 6); 
+}
+
+// Renders the current view of the 3D environment
+void drawEnvironment()
+{
+  
+}
+
 void displayFrame()
 {
   // check if it's time to draw next frame
   if(Bft.frame1-Bft.frame2 >= MSPF)
   {
     clearBackground();
-    
+    drawTest(); 
     // frame2 holds elapsed time (ms) at which last frame was drawn;
     // frame2 is continuously used to calculate when to draw next frame
     Bft.frame2 = Bft.frame1;
