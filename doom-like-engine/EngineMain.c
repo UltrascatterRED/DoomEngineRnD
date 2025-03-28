@@ -33,10 +33,29 @@ int fpsSampleRate = 100; // default: 100
 int sampleSum = 0;
 // tracks index to insert next FPS sample to
 int nextSampleIdx = 0;
+// END DEBUG
+// Keymaps for player/camera controls
+// DEV NOTE: Look into refactor to constant/readonly struct for organization
+unsigned char MOVE_FORWARD = 'w';
+unsigned char MOVE_BACK = 's';
+unsigned char STRAFE_LEFT = 'a';
+unsigned char STRAFE_RIGHT = 'd';
+unsigned char LOOK_LEFT = ',';
+unsigned char LOOK_RIGHT = '.';
+unsigned char FLY_UP = 'e';
+unsigned char FLY_DOWN = 'q';
+
+// frame buffer information; used to draw frames
 typedef struct
 {
   int frame1, frame2;
 }bufferTime; bufferTime Bft;
+// stores keyboard input state
+typedef struct
+{
+  // move forward, move back, strafe left, strafe right, look left, look right, fly up, fly down
+  int moveF, moveB, strafeL, strafeR, lookL, lookR, flyU, flyD;
+}keyState; keyState KeyState;
 
 void drawPixel(int x, int y, int color)
 {
@@ -140,13 +159,84 @@ void printFPS()
   }
 }
 
+// DEBUG; Displays a "palette" showing all supported colors and animated frames
+int tick = 0;
+void drawTest()
+{
+  int swHalf = SCREEN_WIDTH/2;
+  int shHalf = SCREEN_HEIGHT/2;
+  int c = 0; // color ID
+  for(int y = 0; y < shHalf; y++)
+  {
+    for(int x = 0; x < swHalf; x++)
+    {
+      drawPixel(x, y, c); 
+      c += 1;
+      if(c > 8) { c = 0; }
+    }
+  }
+  //frame rate
+  tick += 1; 
+  if(tick>20) { tick = 0; } 
+  drawPixel(swHalf, shHalf+tick, 6); 
+}
+
+// Renders the current view of the 3D environment
+void drawEnvironment()
+{
+  
+}
+void execInputsDebug()
+{
+  if(KeyState.moveF == 1)
+  {
+    printf("Pressing %c: moving forward\n", MOVE_FORWARD);
+  }
+  if(KeyState.moveB == 1)
+  {
+    printf("Pressing %c: moving back\n", MOVE_BACK);
+  }
+  if(KeyState.strafeL == 1)
+  {
+    printf("Pressing %c: strafing left\n", STRAFE_LEFT);
+  }
+  if(KeyState.strafeR == 1)
+  {
+    printf("Pressing %c: strafing right\n", STRAFE_RIGHT);
+  }
+  if(KeyState.lookL == 1)
+  {
+    printf("Pressing %c: looking left\n", LOOK_LEFT);
+  }
+  if(KeyState.lookR == 1)
+  {
+    printf("Pressing %c: looking right\n", LOOK_RIGHT);
+  }
+  if(KeyState.flyU == 1)
+  {
+    printf("Pressing %c: flying up\n", FLY_UP);
+  }
+  if(KeyState.flyD == 1)
+  {
+    printf("Pressing %c: flying down\n", FLY_DOWN);
+  }
+}
+// checks for updates to input keys' state and performs corresponding action(s)
+// (i.e. MOVE_FORWARD key pressed down, player/camera moves forward)
+void execInputs()
+{
+
+}
+
 void displayFrame()
 {
   // check if it's time to draw next frame
   if(Bft.frame1-Bft.frame2 >= MSPF)
   {
     clearBackground();
-    
+    /*execInputs();*/
+    execInputsDebug(); // debug (duh)
+    drawTest(); 
     // frame2 holds elapsed time (ms) at which last frame was drawn;
     // frame2 is continuously used to calculate when to draw next frame
     Bft.frame2 = Bft.frame1;
@@ -158,7 +248,44 @@ void displayFrame()
   glutPostRedisplay();
   // debug
   /*printf("frame drawn in %dms\n", Bft.frame1-Bft.frame2);*/
-  printFPS();
+  /*printFPS();*/
+}
+
+// glut callback function; checks if any new keys have been pressed down,
+// writes updates to global struct KeyState
+void checkKeysDown(unsigned char key, int x, int y)
+{
+  /*unsigned char MOVE_FORWARD = 'w';*/
+  /*unsigned char MOVE_BACK = 's';*/
+  /*unsigned char STRAFE_LEFT = 'a';*/
+  /*unsigned char STRAFE_RIGHT = 'd';*/
+  /*unsigned char LOOK_LEFT = ',';*/
+  /*unsigned char LOOK_RIGHT = '.';*/
+  /*unsigned char FLY_UP = 'e';*/
+  /*unsigned char FLY_DOWN = 'q';*/
+  /*int moveF, moveB, strafeL, strafeR, lookL, lookR, flyU, flyD;*/
+  // DEV NOTE: "== 1" part of expression maay be redundant, test without it
+  if(key == MOVE_FORWARD == 1)  { KeyState.moveF = 1; }
+  if(key == MOVE_BACK == 1)     { KeyState.moveB = 1; }
+  if(key == STRAFE_LEFT == 1)   { KeyState.strafeL = 1; }
+  if(key == STRAFE_RIGHT == 1)  { KeyState.strafeR = 1; }
+  if(key == LOOK_LEFT == 1)     { KeyState.lookL = 1; }
+  if(key == LOOK_RIGHT == 1)    { KeyState.lookR = 1; }
+  if(key == FLY_UP == 1)        { KeyState.flyU = 1; }
+  if(key == FLY_DOWN == 1)      { KeyState.flyD = 1; }
+}
+// glut callback function; checks if any new keys have been released, 
+// writes updates to global struct KeyState
+void checkKeysUp(unsigned char key, int x, int y)
+{
+  if(key == MOVE_FORWARD == 1)  { KeyState.moveF = 0; }
+  if(key == MOVE_BACK == 1)     { KeyState.moveB = 0; }
+  if(key == STRAFE_LEFT == 1)   { KeyState.strafeL = 0; }
+  if(key == STRAFE_RIGHT == 1)  { KeyState.strafeR = 0; }
+  if(key == LOOK_LEFT == 1)     { KeyState.lookL = 0; }
+  if(key == LOOK_RIGHT == 1)    { KeyState.lookR = 0; }
+  if(key == FLY_UP == 1)        { KeyState.flyU = 0; }
+  if(key == FLY_DOWN == 1)      { KeyState.flyD = 0; }
 }
 
 int main(int argc, char* argv[])
@@ -172,8 +299,8 @@ int main(int argc, char* argv[])
   gluOrtho2D(0,GL_WIN_WIDTH,0,GL_WIN_HEIGHT);      //origin bottom left
   /*init();*/
   glutDisplayFunc(displayFrame);
-  /*glutKeyboardFunc(KeysDown);*/
-  /*glutKeyboardUpFunc(KeysUp);*/
+  glutKeyboardFunc(checkKeysDown);
+  glutKeyboardUpFunc(checkKeysUp);
   glutMainLoop();
   return 0;
 }
