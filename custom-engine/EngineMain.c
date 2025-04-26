@@ -194,6 +194,25 @@ void drawTest()
   drawPixel(swHalf, shHalf+tick, 6); 
 }
 
+// draws a singular wall on the screen. All coordinate values handled
+// by this function are in SCREEN SPACE, not 3D space.
+void drawWall(int x1, int x2, int by1, int by2)
+{
+  // "by" is short for bottom y, aka y coords of bottom edge of wall
+  int delta_by = by2 - by1;
+  // set delta_x to 1 if 0 to prevent dividing by zero
+  int delta_x = x2 - x1; if(delta_x == 0) { delta_x = 1; }
+
+  for(int x = x1; x < x2; x++)
+  {
+    // 0.5 needed for "rounding issues", investigate further.
+    // Current conjecture is that this value "nudges" the current coordinates
+    // to the correct placement
+    int y = delta_by * (x - x1 + 0.5) / delta_x + by1;
+    drawPixel(x, y, 6); // currently hardcoded as yellow, refactor to param later
+  }
+}
+
 // Renders the current view of the 3D environment
 void drawView()
 {
@@ -234,14 +253,16 @@ void drawView()
   wallY[1] = (wallZ[1] * FOV) / wallY[1] + (SCREEN_HEIGHT / 2);
   // draw points on screen
   // DEV NOTE: refactor offscreen clipping to separate function
-  if( wallX[0]>0 && wallX[0]<SCREEN_WIDTH && wallY[0]>0 && wallY[0]<SCREEN_HEIGHT) 
-  {
-    drawPixel(wallX[0], wallY[0], 6); // 6 is the color code for pure yellow
-  }
-  if( wallX[1]>0 && wallX[1]<SCREEN_WIDTH && wallY[1]>0 && wallY[1]<SCREEN_HEIGHT)
-  {
-    drawPixel(wallX[1], wallY[1], 6); // 6 is the color code for pure yellow
-  } 
+  // if( wallX[0]>0 && wallX[0]<SCREEN_WIDTH && wallY[0]>0 && wallY[0]<SCREEN_HEIGHT) 
+  // {
+  //   drawPixel(wallX[0], wallY[0], 6); // 6 is the color code for pure yellow
+  // }
+  // if( wallX[1]>0 && wallX[1]<SCREEN_WIDTH && wallY[1]>0 && wallY[1]<SCREEN_HEIGHT)
+  // {
+  //   drawPixel(wallX[1], wallY[1], 6); // 6 is the color code for pure yellow
+  // }
+
+  drawWall(wallX[0], wallX[1], wallY[0], wallY[1]);
 }
 void execInputsDebug()
 {
