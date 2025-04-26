@@ -196,10 +196,12 @@ void drawTest()
 
 // draws a singular wall on the screen. All coordinate values handled
 // by this function are in SCREEN SPACE, not 3D space.
-void drawWall(int x1, int x2, int by1, int by2)
+void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
 {
   // "by" is short for bottom y, aka y coords of bottom edge of wall
   int delta_by = by2 - by1;
+  // "ty" is likewise short for top y, the y coords of top edge of wall
+  int delta_ty = ty2 - ty1;
   // set delta_x to 1 if 0 to prevent dividing by zero
   int delta_x = x2 - x1; if(delta_x == 0) { delta_x = 1; }
 
@@ -208,8 +210,18 @@ void drawWall(int x1, int x2, int by1, int by2)
     // 0.5 needed for "rounding issues", investigate further.
     // Current conjecture is that this value "nudges" the current coordinates
     // to the correct placement
-    int y = delta_by * (x - x1 + 0.5) / delta_x + by1;
-    drawPixel(x, y, 6); // currently hardcoded as yellow, refactor to param later
+    // by represents current bottom y coord for the vertical line to be drawn
+    int by = delta_by * (x - x1 + 0.5) / delta_x + by1;
+    int ty = delta_ty * (x - x1 + 0.5) / delta_x + ty1;
+    drawPixel(x, by, color); // currently hardcoded as yellow, refactor to param later
+    drawPixel(x, ty, color); // currently hardcoded as yellow, refactor to param later
+    
+    // draw between current bottom point and top point, creating a vertical line of
+    // pixels 
+    for(int y = by; y < ty; y++)
+    {
+      drawPixel(x, y, color);
+    }
   }
 }
 
@@ -244,13 +256,36 @@ void drawView()
   // z coords are unaffected by looking angle
   wallZ[1] = wallZ[1] - Player.z;
 
-  // transform 3D wall points into 2D screen positions
+  // set upper 2 points' coords. X and Y are the same for vertically aligned points,
+  // but z coords will be offset, defining wall height
+  int wall_height = 40;
+
+  wallX[2] = wallX[0];
+  wallY[2] = wallY[0];
+  wallZ[2] = wallZ[0] + wall_height;
+
+  wallX[3] = wallX[1];
+  wallY[3] = wallY[1];
+  wallZ[3] = wallZ[1] + wall_height;
+
+  // prevent division by 0
   if(wallY[0] == 0) { wallY[0] = 1; }
   if(wallY[1] == 0) { wallY[1] = 1; }
+  if(wallY[2] == 0) { wallY[2] = 1; }
+  if(wallY[3] == 0) { wallY[3] = 1; }
+
+  // transform 3D wall points into 2D screen positions
   wallX[0] = (wallX[0] * FOV) / wallY[0] + (SCREEN_WIDTH / 2); 
   wallY[0] = (wallZ[0] * FOV) / wallY[0] + (SCREEN_HEIGHT / 2);
+
   wallX[1] = (wallX[1] * FOV) / wallY[1] + (SCREEN_WIDTH / 2);
   wallY[1] = (wallZ[1] * FOV) / wallY[1] + (SCREEN_HEIGHT / 2);
+
+  wallX[2] = (wallX[2] * FOV) / wallY[2] + (SCREEN_WIDTH / 2);
+  wallY[2] = (wallZ[2] * FOV) / wallY[2] + (SCREEN_HEIGHT / 2);
+
+  wallX[3] = (wallX[3] * FOV) / wallY[3] + (SCREEN_WIDTH / 2);
+  wallY[3] = (wallZ[3] * FOV) / wallY[3] + (SCREEN_HEIGHT / 2);
   // draw points on screen
   // DEV NOTE: refactor offscreen clipping to separate function
   // if( wallX[0]>0 && wallX[0]<SCREEN_WIDTH && wallY[0]>0 && wallY[0]<SCREEN_HEIGHT) 
@@ -262,7 +297,7 @@ void drawView()
   //   drawPixel(wallX[1], wallY[1], 6); // 6 is the color code for pure yellow
   // }
 
-  drawWall(wallX[0], wallX[1], wallY[0], wallY[1]);
+  drawWall(wallX[0], wallX[1], wallY[0], wallY[1], wallY[2], wallY[3], 6);
 }
 void execInputsDebug()
 {
@@ -377,8 +412,8 @@ void displayFrame()
   {
     clearBackground();
     execInputs();
-    // execInputsDebug(); // debug (duh)
-    //drawTest(); 
+    execInputsDebug(); // debug (duh)
+    //drawTest(); // debug; must comment out drawView() to use 
     drawView();
     // frame2 holds elapsed time (ms) at which last frame was drawn;
     // frame2 is continuously used to calculate when to draw next frame
