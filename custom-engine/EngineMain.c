@@ -70,6 +70,16 @@ typedef struct
   int angle; // angle of player's looking direction
 }player; player Player;
 
+typedef struct
+{
+  int x1;
+  int y1;
+  int x2;
+  int y2;
+  int height; // height in z direction
+  int color;  // wall color lookup code
+}wall;
+
 void drawPixel(int x, int y, int color)
 {
   // rgb[0] is red
@@ -168,7 +178,7 @@ void printFPS()
     // calculate average frame rate
     int avgFPS = sampleSum / fpsSampleRate;
     sampleSum = 0;
-    printf("FPS: %d\n", avgFPS); 
+    printf("\t\t\tFPS: %d\n", avgFPS); 
   }
 }
 
@@ -196,6 +206,8 @@ void drawTest()
 
 // draws a singular wall on the screen. All coordinate values handled
 // by this function are in SCREEN SPACE, not 3D space.
+// DEV NOTE: refactor params to request z height value instead of top y vals
+//           (same height value as in wall struct)
 void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
 {
   // "by" is short for bottom y, aka y coords of bottom edge of wall
@@ -204,22 +216,51 @@ void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
   int delta_ty = ty2 - ty1;
   // set delta_x to 1 if 0 to prevent dividing by zero
   int delta_x = x2 - x1; if(delta_x == 0) { delta_x = 1; }
+  int x_start = x1; // store initial x1 value, which is needed for wall drawing
 
-  for(int x = x1; x < x2; x++)
+  // clip x1, x2 to player view in order to still draw wall. Without this
+  // operation, the points may end up out-of-view of the screen, and the wall
+  // cannot be drawn.
+  // NOTE: clipping to 1 and screen width - 1 is optional; this is done as a
+  //       simple debug behavior to confirm clipping by leaving a 1px margin
+  //       on all sides of the screen. Clipping to 0 and screen width is also
+  //       fine.
+  if(x1 < 1) { x1 = 1; }
+  if(x1 > SCREEN_WIDTH - 1) { x1 = SCREEN_WIDTH - 1; }
+  if(x2 < 1) { x2 = 1; }
+  if(x2 > SCREEN_WIDTH - 1) { x2 = SCREEN_WIDTH - 1; }
+
+  for(int x = x_start; x < x2; x++)
   {
     // 0.5 needed for "rounding issues", investigate further.
     // Current conjecture is that this value "nudges" the current coordinates
     // to the correct placement
     // by represents current bottom y coord for the vertical line to be drawn
-    int by = delta_by * (x - x1 + 0.5) / delta_x + by1;
-    int ty = delta_ty * (x - x1 + 0.5) / delta_x + ty1;
-    drawPixel(x, by, color); // currently hardcoded as yellow, refactor to param later
-    drawPixel(x, ty, color); // currently hardcoded as yellow, refactor to param later
+    int by = delta_by * (x - x_start + 0.5) / delta_x + by1;
+    int ty = delta_ty * (x - x_start + 0.5) / delta_x + ty1;
+    
+    // clip by, ty to player view. Same reasoning as x clipping above.
+    if(by < 1) { by = 1; }
+    if(by > SCREEN_HEIGHT - 1) { by = SCREEN_HEIGHT - 1; }
+    if(ty < 1) { ty = 1; }
+    if(ty > SCREEN_HEIGHT - 1) { ty = SCREEN_HEIGHT - 1; }
+    
+
+    // drawPixel(x, by, color); // currently hardcoded as yellow, refactor to param later
+    // drawPixel(x, ty, color); // currently hardcoded as yellow, refactor to param later
     
     // draw between current bottom point and top point, creating a vertical line of
     // pixels 
     for(int y = by; y < ty; y++)
     {
+      // debug: draw staring point of wall in red to
+      // visually identify it
+      // if(x == x_start && y == by)
+      // {
+      //   drawPixel(x, y, 0);
+      //   continue;
+      // }
+      // end debug
       drawPixel(x, y, color);
     }
   }
@@ -426,7 +467,7 @@ void displayFrame()
   glutPostRedisplay();
   // debug
   /*printf("frame drawn in %dms\n", Bft.frame1-Bft.frame2);*/
-  /*printFPS();*/
+  // printFPS();
 }
 
 // glut callback function; checks if any new keys have been pressed down,
