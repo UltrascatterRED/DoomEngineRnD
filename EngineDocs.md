@@ -17,7 +17,85 @@ The engine makes heavy use of an OpenGL library for C called Glut. Glut handles 
 
 # Terminology
 **Scaled Pixels** - Pixels as they appear on the output display. These pixels may be *scaled* to a different size from the physical pixels in the monitor.
+
 **Hardware Pixels** - The physical pixels in the computer's monitor. Distinct from *scaled pixels*, as they obviously cannot change in size.
+
+**Player** - The movable viewport through which the environment is rendered.
+
+**Screen Space** - Refers to the 2D output window (aka screen). Used to contextualize coordinate values.
+
+**Environment Space** - Refers to the 3D enviroment being represented in the engine. Used to contextualize coordinate values.
+
+# Components
+## Global Values
+These are globally accessible constants that are intended to be altered as needed.
+
+**Screen Width** - The width, in scaled pixels, of the output window.
+
+**Screen Height** - The height, in scaled pixels, of the output window.
+
+**Pixel Scale** - the ratio of scaled pixels' size to hardware pixels' size. Must be a square value (4 by default).
+
+**GL Window Width** - the width, in hardware pixels, of the output window. Required for certain glut calculations.
+
+**GL Window Height** - the height, in hardware pixels, of the output window. Required for certain glut calculations.
+
+**Milliseconds per Frame (MSPF)** - the approximate number of milliseconds the engine will allocate to drawing each frame. Divide 1000 by this value to get the target minimum frame rate.
+### Debug
+These values only affect debug behaviors.
+
+**fpsDisplayRate** - number of executions of displayFrame() between FPS printouts. (default: 100,000)
+
+**fpsSampleRate** - number of FPS samples (calculated from bufferTime) to average per FPS printout. (default: 100) 
+
+**Input Keys (multiple values)** - the defined keybinds for each input action, given as an unsigned character value.
+* Move Forward (default: w)
+* Move Backward (default: s)
+* Strafe Left (default: a)
+* Strafe Right (default: d)
+* Look Left (default: ,)
+* Look Right (default: .)
+* Fly Up (default: e)
+* Fly Down (default: q)
+## Structs
+These represent a variety of complex entities, from tangible game elements to computation-assisting utilities.
+
+**bufferTime** - *(static)* stores frame buffer timestamps in milliseconds. Used to tell the engine when to advance the frame.<br/><p>Frame buffers are a common part of modern graphics rendering convention, and allow 2 frames to be rendered simultaneously (one to display, one in the background). The frame buffers can then be switched when the frame advances, preventing lag or rendering artifacts.</p>
+
+**keyState** - *(static)* stores the state of each of the input keys. Each key has a corresponding integer value: 1 when pressed, 0 when not pressed.
+
+**trigVals** - *(static)* stores pre-calculated sine and cosine values for degree values, 0 through 359. Used to calculate environment elements' offset relative to the player.
+
+**player** - *(static)* stores state information about the player, such as 3D position (x, y, z) and looking angle (degrees).
+
+**wall** - *(WIP)* stores information about a particular wall, including its (x, y) coordinates and color. Currently not in use, as information about the provided test wall is hardcoded in the main rendering function, drawView().
+
+## Functions
+**drawPixel(int x, int y, int color)** - given a screen space coordinate (x, y) and a color code, draws a scaled pixel on the output window at the corresponding position.
+
+**clearBackground()** - draws a single color to all pixels in the output window, effectively clearing its contents.
+
+**printFPS()** - *(debug)* prints the current calculated FPS to the terminal. The behavior of this function can be adjusted by changing certain global variables (see Components -> Global Values -> Debug).
+
+**drawTest()** - *(debug)* draws some test graphics to the screen to verify basic functionality (refreshing frames, color codes, etc)
+
+**clipBehindCamera()** - given input wall coordinates (Environment Space), clips portions of wall(s) behind the camera's view, preventing them from being drawn. Prevents rendering errors and unecessary calculations.
+
+**drawWall()** - given input wall coordinates (Screen Space), draws the visible portion of the wall to the screen. Clips offscreen portions of the wall, preventing them from being drawn.
+
+**drawView()** - draws all of the graphical elements for the current frame, invoking clipBehindCamera() and drawWall() as needed.
+
+**displayFrame()** - interfaces with the glut library to draw the next frame and swap the buffers. Will also invoke printFPS(), if enabled.
+
+**execInputs()** - checks for any pressed down input keys, and executes the corresponding action (i.e. 'a' pressed down -> move player forward).
+
+**execInputsDebug()** - same as execInputs(), but each input action is a printout to the terminal indicating which key(s) are being pressed.
+
+**checkKeysDown()** - glut callback function that updates keyState when keys are pressed down.
+
+**checkKeysUp()** - glut callback function that updates keyState when keys are released.
+
+**init()** - initializes numerous critical values, such as calculated sine/cosine lookup values in struct trigVals and player starting position. This is always technically (0,0,0), but non-zero values will offset environment accordingly; see Player Movement for details.
 
 # Initialization
 On startup, the engine initializes several important global values. These include the following:
@@ -32,18 +110,16 @@ On startup, the engine initializes several important global values. These includ
 * The keybinds of defined user-camera actions (aka "player" actions)
   * Move forward/back, strafe left/right, look left/right, etc
 
+## Structs Initialized
+  * bufferTime
+  * keyState
+  * trigVals
+  * player
 
-## Several critical structs are also initialized
-  * bufferTime: stores the timestamp of the last drawn frame and the current elapsed time
-    * used to tell Glut when to refresh the frame
-  * keyState: stores the state of all defined keyboard inputs
-    * referenced constantly in the engine to execute defined input actions (i.e. 'A' pressed --> move forward)
-  * trigVals: stores pre-calculated sine and cosine values for each degree value from 0 and 360. This is done to avoid constantly re-calculating these values at runtime.
-  * player: stores state information about player(s). The primary function is to keep track of the main player character's state, but it can also be used to likewise track the state of non-player cameras.
+# Player movement
+When moving the player around the environment, the environment is actually being moved around the player. At present, there is no particular reason for this, other than that my research has led me down this implementation path. I may opt to refactor this at a later date (i.e. to make accommodating multiple cameras easier). The player will always remain at (0,0,0) with a looking angle of 0 degrees (facing positive Y).
 
-# Engine Behavior
-## Player movement
-When moving the player around the environment, the environment is actually being moved around the player. At present, there is no particular reason for this, other than that my research has led me down this implementation path. I may opt to refactor this at a later date (i.e. to make accommodating multiple cameras easier).
+For movement keybinds, see Components -> Global Values.
 
 # Drawing Frames
 Using Glut's main loop, the engine refreshes the frame every N milliseconds, where N is the value of the globally defined milliseconds per frame. The engine monitors the state of the struct "bufferTime" to determine when to draw the next frame. The frame's pixels are drawn in layers, starting with a flat background color and ending with the "highest" layer, which is drawn op top of everything last. The current intention is to use this "layering" guideline to facilitate basic environment rendering, where walls, floors, ceilings, etc can be drawn back-to-front relative to the user camera.
