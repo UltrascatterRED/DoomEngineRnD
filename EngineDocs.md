@@ -14,6 +14,7 @@ This engine was created for me (the developer) to learn about low-level game dev
 
 The engine makes heavy use of an OpenGL library for C called Glut. Glut handles almost everything, including drawing frames, drawing the display window itself, and listening for input events.
 
+
 # Terminology
 **Scaled Pixels** - Pixels as they appear on the output display. These pixels may be *scaled* to a different size from the physical pixels in the monitor.
 **Hardware Pixels** - The physical pixels in the computer's monitor. Distinct from *scaled pixels*, as they obviously cannot change in size.
@@ -31,7 +32,8 @@ On startup, the engine initializes several important global values. These includ
 * The keybinds of defined user-camera actions (aka "player" actions)
   * Move forward/back, strafe left/right, look left/right, etc
 
-Several critical structs are also initialized
+
+## Several critical structs are also initialized
   * bufferTime: stores the timestamp of the last drawn frame and the current elapsed time
     * used to tell Glut when to refresh the frame
   * keyState: stores the state of all defined keyboard inputs
