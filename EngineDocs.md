@@ -77,6 +77,26 @@ These represent a variety of complex entities, from tangible game elements to co
 
 **printFPS()** - *(debug)* prints the current calculated FPS to the terminal. The behavior of this function can be adjusted by changing certain global variables (see Components -> Global Values -> Debug).
 
+**drawTest()** - *(debug)* draws some test graphics to the screen to verify basic functionality (refreshing frames, color codes, etc)
+
+**clipBehindCamera()** - given input wall coordinates (Environment Space), clips portions of wall(s) behind the camera's view, preventing them from being drawn. Prevents rendering errors and unecessary calculations.
+
+**drawWall()** - given input wall coordinates (Screen Space), draws the visible portion of the wall to the screen. Clips offscreen portions of the wall, preventing them from being drawn.
+
+**drawView()** - draws all of the graphical elements for the current frame, invoking clipBehindCamera() and drawWall() as needed.
+
+**displayFrame()** - interfaces with the glut library to draw the next frame and swap the buffers. Will also invoke printFPS(), if enabled.
+
+**execInputs()** - checks for any pressed down input keys, and executes the corresponding action (i.e. 'a' pressed down -> move player forward).
+
+**execInputsDebug()** - same as execInputs(), but each input action is a printout to the terminal indicating which key(s) are being pressed.
+
+**checkKeysDown()** - glut callback function that updates keyState when keys are pressed down.
+
+**checkKeysUp()** - glut callback function that updates keyState when keys are released.
+
+**init()** - initializes numerous critical values, such as calculated sine/cosine lookup values in struct trigVals and player starting position. This is always technically (0,0,0), but non-zero values will offset environment accordingly; see Player Movement for details.
+
 # Initialization
 On startup, the engine initializes several important global values. These include the following:
 * Width of display window (in scaled pixels)
