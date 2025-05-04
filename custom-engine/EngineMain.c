@@ -255,9 +255,9 @@ void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
   //       simple debug behavior to confirm clipping by leaving a 1px margin
   //       on all sides of the screen. Clipping to 0 and screen width is also
   //       fine.
-  if(x1 < 1) { x1 = 1; printf("clipping screen x1\n"); }
+  if(x1 < 1) { x1 = 1; }
   if(x1 > SCREEN_WIDTH - 1) { x1 = SCREEN_WIDTH - 1; }
-  if(x2 < 1) { x2 = 1; printf("clipping screen x2\n"); }
+  if(x2 < 1) { x2 = 1; }
   if(x2 > SCREEN_WIDTH - 1) { x2 = SCREEN_WIDTH - 1; }
 
   for(int x = x1; x < x2; x++)
@@ -268,7 +268,7 @@ void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
     // by represents current bottom y coord for the vertical line to be drawn
     int by = delta_by * (x - x_start + 0.5) / delta_x + by1;
     int ty = delta_ty * (x - x_start + 0.5) / delta_x + ty1;
-    printf("Bottom Y = %d, Top Y = %d\n", by, ty); // debug 
+    // printf("Bottom Y = %d, Top Y = %d\n", by, ty); // debug 
     // clip by, ty to player view. Same reasoning as x clipping above.
     if(by < 1) { by = 1; }
     if(by > SCREEN_HEIGHT - 1) { by = SCREEN_HEIGHT - 1; }
@@ -282,11 +282,11 @@ void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
       // debug: draw border of wall in red
       // This currently serves no practical purpose, but looks kind of cool.
       // Maybe turn into a shader effect or something
-      // if(x == x1 || x == x2-1 || y == by || y == ty-1)
-      // {
-      //   drawPixel(x, y, 0);
-      //   continue;
-      // }
+      if(x == x1 || x == x2-1 || y == by || y == ty-1)
+      {
+        drawPixel(x, y, 7);
+        continue;
+      }
       // end debug
       drawPixel(x, y, color);
     }
@@ -506,8 +506,7 @@ void displayFrame()
   Bft.frame1 = glutGet(GLUT_ELAPSED_TIME);
   glutPostRedisplay();
   // debug
-  /*printf("frame drawn in %dms\n", Bft.frame1-Bft.frame2);*/
-  // printFPS();
+  printFPS();
 }
 
 // glut callback function; checks if any new keys have been pressed down,
@@ -556,9 +555,9 @@ void init()
     TrigVals.cos[i] = cos(i/180.0 * M_PI);
   }
   // initialize player character state
-  Player.x = 0;
-  Player.y = 0;
-  Player.z = 0;
+  Player.x = 70;
+  Player.y = -50;
+  Player.z = 20;
   Player.angle = 0;
 }
 
