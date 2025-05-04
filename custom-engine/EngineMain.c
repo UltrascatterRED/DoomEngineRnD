@@ -204,12 +204,42 @@ void drawTest()
   drawPixel(swHalf, shHalf+tick, 6); 
 }
 
+// Clips the 3D points of a partially visible wall to the current view
+// of the camera. This prevents unwanted rendering errors.
+// Only the first point is passed by reference because these are the only
+// values being altered.
+// Params: wall points in 3D space
+void clipBehindCamera(int *x1, int *y1, int *z1, int x2, int y2, int z2)
+{
+  // store starting values of y1, y2 for use in calculation of instersect factor 
+  // distance plane is difference in y coords, therefore perpendicular to plane of
+  // camera view, which always faces positive y
+  float distPlane_a = *y1; // always <=0
+  float distPlane_b = y2;
+  float distPlane = distPlane_a - distPlane_b; // always negative
+  if(distPlane == 0) { distPlane = 1; } //prevent divide by 0; 
+  // represents proportion of visible wall; always between 0 and 1.
+  // Used to calculate x1, y1, z1 transforms
+  float intersectFactor = distPlane_a / distPlane;
+  // transform x1, y1, z1 to position corresponding to camera view boundary 
+  *x1 = *x1 + intersectFactor * (x2-(*x1));
+  *y1 = *y1 + intersectFactor * (y2-(*y1));
+  if(*y1 == 0) { *y1 = 1; } // prevent divide by 0 in transformation to screen space
+  *z1 = *z1 + intersectFactor * (z2-(*z1));
+}
+
 // draws a singular wall on the screen. All coordinate values handled
 // by this function are in SCREEN SPACE, not 3D space.
 // DEV NOTE: refactor params to request z height value instead of top y vals
 //           (same height value as in wall struct)
 void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
 {
+  // debug
+  // printf("DRAWING A WALL\n");
+  // printf("***************************************\n");
+  // printf("DrawWall params: x1 = %d, x2 = %d\n", x1, x2);
+  // end debug
+
   // "by" is short for bottom y, aka y coords of bottom edge of wall
   int delta_by = by2 - by1;
   // "ty" is likewise short for top y, the y coords of top edge of wall
@@ -225,12 +255,12 @@ void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
   //       simple debug behavior to confirm clipping by leaving a 1px margin
   //       on all sides of the screen. Clipping to 0 and screen width is also
   //       fine.
-  if(x1 < 1) { x1 = 1; }
+  if(x1 < 1) { x1 = 1; printf("clipping screen x1\n"); }
   if(x1 > SCREEN_WIDTH - 1) { x1 = SCREEN_WIDTH - 1; }
-  if(x2 < 1) { x2 = 1; }
+  if(x2 < 1) { x2 = 1; printf("clipping screen x2\n"); }
   if(x2 > SCREEN_WIDTH - 1) { x2 = SCREEN_WIDTH - 1; }
 
-  for(int x = x_start; x < x2; x++)
+  for(int x = x1; x < x2; x++)
   {
     // 0.5 needed for "rounding issues", investigate further.
     // Current conjecture is that this value "nudges" the current coordinates
@@ -238,24 +268,21 @@ void drawWall(int x1, int x2, int by1, int by2, int ty1, int ty2, int color)
     // by represents current bottom y coord for the vertical line to be drawn
     int by = delta_by * (x - x_start + 0.5) / delta_x + by1;
     int ty = delta_ty * (x - x_start + 0.5) / delta_x + ty1;
-    
+    printf("Bottom Y = %d, Top Y = %d\n", by, ty); // debug 
     // clip by, ty to player view. Same reasoning as x clipping above.
     if(by < 1) { by = 1; }
     if(by > SCREEN_HEIGHT - 1) { by = SCREEN_HEIGHT - 1; }
     if(ty < 1) { ty = 1; }
     if(ty > SCREEN_HEIGHT - 1) { ty = SCREEN_HEIGHT - 1; }
     
-
-    // drawPixel(x, by, color); // currently hardcoded as yellow, refactor to param later
-    // drawPixel(x, ty, color); // currently hardcoded as yellow, refactor to param later
-    
     // draw between current bottom point and top point, creating a vertical line of
     // pixels 
     for(int y = by; y < ty; y++)
     {
-      // debug: draw staring point of wall in red to
-      // visually identify it
-      // if(x == x_start && y == by)
+      // debug: draw border of wall in red
+      // This currently serves no practical purpose, but looks kind of cool.
+      // Maybe turn into a shader effect or something
+      // if(x == x1 || x == x2-1 || y == by || y == ty-1)
       // {
       //   drawPixel(x, y, 0);
       //   continue;
@@ -309,11 +336,25 @@ void drawView()
   wallY[3] = wallY[1];
   wallZ[3] = wallZ[1] + wall_height;
 
-  // prevent division by 0
-  if(wallY[0] == 0) { wallY[0] = 1; }
-  if(wallY[1] == 0) { wallY[1] = 1; }
-  if(wallY[2] == 0) { wallY[2] = 1; }
-  if(wallY[3] == 0) { wallY[3] = 1; }
+  // clip offscreen portion of wall (aka skip rendering it)
+  // skip drawing wall if entirely offscreen
+  if(wallY[0] < 1 && wallY[1] < 1) { printf("[]--> SKIPPED WALL DRAW\n"); return; }
+  // clip point 1 of wall if offscreen
+  if(wallY[0] < 1)
+  {
+    // clip bottom line of wall
+    clipBehindCamera(&wallX[0], &wallY[0], &wallZ[0], wallX[1], wallY[1], wallZ[1]);
+    // clip top line of wall
+    clipBehindCamera(&wallX[2], &wallY[2], &wallZ[2], wallX[3], wallY[3], wallZ[3]);
+  }
+  // clip point 2 of wall if offscreen
+  if(wallY[1] < 1)
+  {
+    // clip bottom line of wall
+    clipBehindCamera(&wallX[1], &wallY[1], &wallZ[1], wallX[0], wallY[0], wallZ[0]);
+    // clip top line of wall
+    clipBehindCamera(&wallX[3], &wallY[3], &wallZ[3], wallX[2], wallY[2], wallZ[2]);
+  }
 
   // transform 3D wall points into 2D screen positions
   wallX[0] = (wallX[0] * FOV) / wallY[0] + (SCREEN_WIDTH / 2); 
@@ -327,16 +368,14 @@ void drawView()
 
   wallX[3] = (wallX[3] * FOV) / wallY[3] + (SCREEN_WIDTH / 2);
   wallY[3] = (wallZ[3] * FOV) / wallY[3] + (SCREEN_HEIGHT / 2);
-  // draw points on screen
-  // DEV NOTE: refactor offscreen clipping to separate function
-  // if( wallX[0]>0 && wallX[0]<SCREEN_WIDTH && wallY[0]>0 && wallY[0]<SCREEN_HEIGHT) 
-  // {
-  //   drawPixel(wallX[0], wallY[0], 6); // 6 is the color code for pure yellow
-  // }
-  // if( wallX[1]>0 && wallX[1]<SCREEN_WIDTH && wallY[1]>0 && wallY[1]<SCREEN_HEIGHT)
-  // {
-  //   drawPixel(wallX[1], wallY[1], 6); // 6 is the color code for pure yellow
-  // }
+
+
+  // return if wall outside of camera view
+  if((wallX[0] < 1 && wallX[1] < 1) || (wallX[0] > SCREEN_WIDTH-1 && wallX[1] > SCREEN_WIDTH-1)) 
+  {
+    printf("[]--> SKIPPED WALL DRAW\n");
+    return; 
+  }
 
   drawWall(wallX[0], wallX[1], wallY[0], wallY[1], wallY[2], wallY[3], 6);
 }
@@ -375,6 +414,7 @@ void execInputsDebug()
     printf("Pressing %c: flying down\n", FLY_DOWN);
   }
 }
+
 // checks for updates to input keys' state and performs corresponding action(s)
 // (i.e. MOVE_FORWARD key pressed down, player/camera moves forward)
 void execInputs()
@@ -453,7 +493,7 @@ void displayFrame()
   {
     clearBackground();
     execInputs();
-    execInputsDebug(); // debug (duh)
+    // execInputsDebug(); // debug (duh)
     //drawTest(); // debug; must comment out drawView() to use 
     drawView();
     // frame2 holds elapsed time (ms) at which last frame was drawn;

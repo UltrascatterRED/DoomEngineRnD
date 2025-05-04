@@ -284,7 +284,9 @@ void draw3D()
         // transform world_x and world_y to their screen positions
         // default value: 200
         int FOV = 150;
+        printf("BEFORE screen calc: wallX[0] = %d, wallY[0] = %d\n", world_x[0], world_y[0]); // debug
         world_x[0] = world_x[0]*FOV / world_y[0]+SW2;
+        printf(" AFTER screen calc: wallX[0] = %d, wallY[0] = %d\n", world_x[0], world_y[0]); // debug
         world_y[0] = world_z[0]*FOV / world_y[0]+SH2;
         world_x[1] = world_x[1]*FOV / world_y[1]+SW2;
         world_y[1] = world_z[1]*FOV / world_y[1]+SH2;
