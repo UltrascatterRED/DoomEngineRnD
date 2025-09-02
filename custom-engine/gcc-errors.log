@@ -1,0 +1,121 @@
+## Error Log - Mon 2025-09-01 19:02:35 EDT ##
+/usr/bin/ld: /tmp/ccDM7w0U.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccn4xvtd.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccDM7w0U.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccn4xvtd.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccDM7w0U.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccn4xvtd.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccDM7w0U.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccn4xvtd.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/cccGX3Cm.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccn4xvtd.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/cccGX3Cm.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccn4xvtd.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/cccGX3Cm.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccn4xvtd.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/cccGX3Cm.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccn4xvtd.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/ccGYl5km.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccn4xvtd.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccGYl5km.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccn4xvtd.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccGYl5km.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccn4xvtd.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccGYl5km.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccn4xvtd.o:(.bss+0xb60): first defined here
+collect2: error: ld returned 1 exit status
+## Error Log - Mon 2025-09-01 19:05:33 EDT ##
+/usr/bin/ld: /tmp/ccS5VZvT.o:(.data+0x0): multiple definition of `Bft'; /tmp/cc40qW3W.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccS5VZvT.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/cc40qW3W.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccS5VZvT.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/cc40qW3W.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccS5VZvT.o:(.bss+0xb60): multiple definition of `Player'; /tmp/cc40qW3W.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/ccRXTNM4.o:(.data+0x0): multiple definition of `Bft'; /tmp/cc40qW3W.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccRXTNM4.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/cc40qW3W.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccRXTNM4.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/cc40qW3W.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccRXTNM4.o:(.bss+0xb60): multiple definition of `Player'; /tmp/cc40qW3W.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/cc4TLBAJ.o:(.data+0x0): multiple definition of `Bft'; /tmp/cc40qW3W.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/cc4TLBAJ.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/cc40qW3W.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/cc4TLBAJ.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/cc40qW3W.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/cc4TLBAJ.o:(.bss+0xb60): multiple definition of `Player'; /tmp/cc40qW3W.o:(.bss+0xb60): first defined here
+collect2: error: ld returned 1 exit status
+## Error Log - Mon 2025-09-01 19:24:51 EDT ##
+/usr/bin/ld: /tmp/ccMuxw8U.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccSsi5MN.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccMuxw8U.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccSsi5MN.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccMuxw8U.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccSsi5MN.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccMuxw8U.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccSsi5MN.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/ccSoJCRQ.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccSsi5MN.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccSoJCRQ.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccSsi5MN.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccSoJCRQ.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccSsi5MN.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccSoJCRQ.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccSsi5MN.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/cc49gSxg.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccSsi5MN.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/cc49gSxg.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccSsi5MN.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/cc49gSxg.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccSsi5MN.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/cc49gSxg.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccSsi5MN.o:(.bss+0xb60): first defined here
+collect2: error: ld returned 1 exit status
+## Error Log - Mon 2025-09-01 19:25:53 EDT ##
+/usr/bin/ld: /tmp/cc1tb9Ku.o:(.data+0x0): multiple definition of `Bft'; /tmp/cciuH0Bn.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/cc1tb9Ku.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/cciuH0Bn.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/cc1tb9Ku.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/cciuH0Bn.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/cc1tb9Ku.o:(.bss+0xb60): multiple definition of `Player'; /tmp/cciuH0Bn.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/ccLgHEgm.o:(.data+0x0): multiple definition of `Bft'; /tmp/cciuH0Bn.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccLgHEgm.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/cciuH0Bn.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccLgHEgm.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/cciuH0Bn.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccLgHEgm.o:(.bss+0xb60): multiple definition of `Player'; /tmp/cciuH0Bn.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/ccqvEJQF.o:(.data+0x0): multiple definition of `Bft'; /tmp/cciuH0Bn.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccqvEJQF.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/cciuH0Bn.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccqvEJQF.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/cciuH0Bn.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccqvEJQF.o:(.bss+0xb60): multiple definition of `Player'; /tmp/cciuH0Bn.o:(.bss+0xb60): first defined here
+collect2: error: ld returned 1 exit status
+## Error Log - Mon 2025-09-01 19:36:28 EDT ##
+/usr/bin/ld: /tmp/ccecHfmf.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccptyzy1.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccecHfmf.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccptyzy1.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccecHfmf.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccptyzy1.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccecHfmf.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccptyzy1.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/ccRDQHbM.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccptyzy1.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccRDQHbM.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccptyzy1.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccRDQHbM.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccptyzy1.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccRDQHbM.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccptyzy1.o:(.bss+0xb60): first defined here
+/usr/bin/ld: /tmp/ccnujs09.o:(.data+0x0): multiple definition of `Bft'; /tmp/ccptyzy1.o:(.data+0x0): first defined here
+/usr/bin/ld: /tmp/ccnujs09.o:(.bss+0x0): multiple definition of `KeyState'; /tmp/ccptyzy1.o:(.bss+0x0): first defined here
+/usr/bin/ld: /tmp/ccnujs09.o:(.bss+0x20): multiple definition of `TrigVals'; /tmp/ccptyzy1.o:(.bss+0x20): first defined here
+/usr/bin/ld: /tmp/ccnujs09.o:(.bss+0xb60): multiple definition of `Player'; /tmp/ccptyzy1.o:(.bss+0xb60): first defined here
+collect2: error: ld returned 1 exit status
+## Error Log - Mon 2025-09-01 19:45:47 EDT ##
+In file included from GameStructs.c:2:
+GameStructs.h:39:8: error: unknown type name ‘bft’
+   39 | extern bft Bft;
+      |        ^~~
+GameStructs.c:5:12: error: conflicting types for ‘Bft’; have ‘bufferTime’
+    5 | bufferTime Bft = { 0, 1 };
+      |            ^~~
+GameStructs.h:39:12: note: previous declaration of ‘Bft’ with type ‘int’
+   39 | extern bft Bft;
+      |            ^~~
+In file included from Debug.h:1,
+                 from Debug.c:4:
+GameStructs.h:39:8: error: unknown type name ‘bft’
+   39 | extern bft Bft;
+      |        ^~~
+In file included from Render.h:4,
+                 from Render.c:3:
+GameStructs.h:39:8: error: unknown type name ‘bft’
+   39 | extern bft Bft;
+      |        ^~~
+In file included from EngineMain.c:11:
+GameStructs.h:39:8: error: unknown type name ‘bft’
+   39 | extern bft Bft;
+      |        ^~~
+EngineMain.c: In function ‘displayFrame’:
+EngineMain.c:138:9: error: request for member ‘frame1’ in something not a structure or union
+  138 |   if(Bft.frame1-Bft.frame2 >= MSPF)
+      |         ^
+EngineMain.c:138:20: error: request for member ‘frame2’ in something not a structure or union
+  138 |   if(Bft.frame1-Bft.frame2 >= MSPF)
+      |                    ^
+EngineMain.c:147:8: error: request for member ‘frame2’ in something not a structure or union
+  147 |     Bft.frame2 = Bft.frame1;
+      |        ^
+EngineMain.c:147:21: error: request for member ‘frame1’ in something not a structure or union
+  147 |     Bft.frame2 = Bft.frame1;
+      |                     ^
+EngineMain.c:152:6: error: request for member ‘frame1’ in something not a structure or union
+  152 |   Bft.frame1 = glutGet(GLUT_ELAPSED_TIME);
+      |      ^
+EngineMain.c:155:12: error: passing argument 1 of ‘printFPS’ from incompatible pointer type [-Wincompatible-pointer-types]
+  155 |   printFPS(&Bft);
+      |            ^~~~
+      |            |
+      |            int *
+In file included from EngineMain.c:12:
+Debug.h:5:27: note: expected ‘bufferTime *’ but argument is of type ‘int *’
+    5 | void printFPS(bufferTime *bft);
+      |               ~~~~~~~~~~~~^~~
+## Error Log - Mon 2025-09-01 19:46:51 EDT ##
